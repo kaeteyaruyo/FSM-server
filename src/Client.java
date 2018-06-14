@@ -148,4 +148,28 @@ public class Client {
 		// Failed to authenticate.
 		return false;
 	}
+	public MailHead[] getAllMail() {
+		return new MailHead[1];
+	}
+	public Mail getMail(Id id) {
+		return new Mail(id,"from","to","title","body");
+	}
+	public boolean sendMail(Mail mail) {
+		return true;
+	}
+	public TaskHead[] getAllTask() {
+		return new TaskHead[1];
+	}
+	public Task getTask(Id id) {
+		return new Task(id, "from", "to", "title", new Text[1]);
+	}
+	public boolean createTask(Task task) {
+		return true;
+	}
+	public boolean updateTask(Task task) {
+		return true;
+	}
+	public boolean deleteTask(Task task) {
+		return true;
+	}
 }
