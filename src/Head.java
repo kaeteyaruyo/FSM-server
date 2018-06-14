@@ -1,11 +1,11 @@
 
 public abstract class Head {
-	private Id id;
+	private String id;
 	private String from;
 	private String to;
 	private String title;
 	
-	public Head( Id id, String from, String to, String title ) {
+	public Head( String id, String from, String to, String title ) {
 		this.id = id;
 		this.from = from;
 		this.to = to;
@@ -13,7 +13,7 @@ public abstract class Head {
 	}
 	
 	public String getId() {
-		return this.id.getId(); 
+		return this.id;
 	}
 	
 	public String getSender() {

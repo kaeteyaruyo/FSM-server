@@ -155,12 +155,12 @@ class ClientHandler extends Thread {
 						.put( "mails", new JSONArray(
 								new JSONObject[] {
 										new JSONObject()
-											.put( "id", 0 )
+											.put( "id", "0" )
 											.put( "from", "kinoe@lala.mail.com" )
 											.put( "to", "kevin@lala.mail.com" )
 											.put( "title", "fuck you" ),
 										new JSONObject()
-											.put( "id", 1 )
+											.put( "id", "1" )
 											.put( "from", "kevin@lala.mail.com" )
 											.put( "to", "kinoe@lala.mail.com" )
 											.put( "title", "eat shit" )
@@ -184,7 +184,7 @@ class ClientHandler extends Thread {
 						response = new JSONObject()
 							.put( "auth", "yes" )
 							.put( "mail", new JSONObject()
-								.put( "id", 0 )
+								.put( "id", "0" )
 								.put( "from", "kinoe@lala.mail.com" )
 								.put( "to", "kevin@lala.mail.com" )
 								.put( "title", "fuck you" )
