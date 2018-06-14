@@ -189,28 +189,56 @@ public class Client {
 			return ( MailHead[] ) temp.toArray(new MailHead[ temp.size() ]);
 		}
 				
-		// Failed to authenticate.
+		// Failed to get all mail.
 		return null;
 	}
-	public Mail getMail(Id id) {
-		return new Mail(id,"from","to","title","body");
+	public Mail getMail( Id id ) {
+		// Create get mail request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "get mail")
+			.put( "session", this.session )
+			.put( "id", id.getId() );
+		
+		// Send get mail request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive get mail response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully get mail response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			JSONObject mail = response.getJSONObject( "mail" );
+			return new Mail(
+				new Id( mail.getInt( "id" ) ),
+				mail.getString( "from" ),
+				mail.getString( "to" ),
+				mail.getString( "title" ),
+				mail.getString( "body" )
+			);
+		}
+		
+		// Failed to get mail.
+		return null;
 	}
-	public boolean sendMail(Mail mail) {
+	public boolean sendMail( Mail mail ) {
 		return true;
 	}
 	public TaskHead[] getAllTask() {
 		return new TaskHead[1];
 	}
-	public Task getTask(Id id) {
+	public Task getTask( Id id ) {
 		return new Task(id, "from", "to", "title", new Text[1]);
 	}
-	public boolean createTask(Task task) {
+	public boolean createTask( Task task ) {
 		return true;
 	}
-	public boolean updateTask(Task task) {
+	public boolean updateTask( Task task ) {
 		return true;
 	}
-	public boolean deleteTask(Task task) {
+	public boolean deleteTask( Task task ) {
 		return true;
 	}
 }

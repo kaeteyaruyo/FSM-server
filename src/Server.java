@@ -147,7 +147,7 @@ class ClientHandler extends Thread {
 			// Get all mail list event
 			case "get all mail":
 				//------------------------------------------------------------------------
-				// TODO: get database user mail data
+				// TODO: get database user all mail data
 				//------------------------------------------------------------------------
 				// Successfully get all mail data.
 				if( true ) {
@@ -175,6 +175,30 @@ class ClientHandler extends Thread {
 				}
 				this.out.writeUTF( response.toString() );
 				break;
+				// Get all mail list event
+				case "get mail":
+					//------------------------------------------------------------------------
+					// TODO: get database user mail data
+					//------------------------------------------------------------------------
+					// Successfully get all mail data.
+					if( true ) {
+						response = new JSONObject()
+							.put( "auth", "yes" )
+							.put( "mail", new JSONObject()
+								.put( "id", 0 )
+								.put( "from", "kinoe@lala.mail.com" )
+								.put( "to", "kevin@lala.mail.com" )
+								.put( "title", "fuck you" )
+								.put( "body", "FUCKING SHITTY MOTHERFUCKER" )
+							);
+					}
+					// Failed to authenticate.
+					else {
+						response = new JSONObject()
+							.put( "auth", "no" );
+					}
+					this.out.writeUTF( response.toString() );
+					break;
 			}
 			this.in.close();
 			this.out.close();

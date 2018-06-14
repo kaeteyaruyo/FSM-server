@@ -5,4 +5,7 @@ public class Mail extends MailHead {
 		super( id, from, to, title );
 		this.body = body;
 	}
+	public String getBody() {
+		return this.body;
+	}
 }
