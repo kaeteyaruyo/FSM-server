@@ -144,8 +144,37 @@ class ClientHandler extends Thread {
 				}
 				this.out.writeUTF( response.toString() );
 				break;
-			case "get task":
-					this.out.writeUTF( "" );
+			// Get all mail list event
+			case "get all mail":
+				//------------------------------------------------------------------------
+				// TODO: get database user mail data
+				//------------------------------------------------------------------------
+				// Successfully get all mail data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" )
+						.put( "mails", new JSONArray(
+								new JSONObject[] {
+										new JSONObject()
+											.put( "id", 0 )
+											.put( "from", "kinoe@lala.mail.com" )
+											.put( "to", "kevin@lala.mail.com" )
+											.put( "title", "fuck you" ),
+										new JSONObject()
+											.put( "id", 1 )
+											.put( "from", "kevin@lala.mail.com" )
+											.put( "to", "kinoe@lala.mail.com" )
+											.put( "title", "eat shit" )
+								}
+						) );
+				}
+				// Failed to authenticate.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				this.out.writeUTF( response.toString() );
+				break;
 			}
 			this.in.close();
 			this.out.close();

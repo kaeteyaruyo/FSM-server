@@ -7,6 +7,9 @@ public class Id {
 	public Id( int id ) {
 		this.id = id;
 	}
+	public Id( String id ) {
+		this.id = Integer.parseInt( id );
+	}
 	/****************************************************************
 	 * return id
 	 ***************************************************************/
