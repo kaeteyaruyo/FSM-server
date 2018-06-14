@@ -17,5 +17,6 @@ public class testClient {
 		System.out.println( "to: " + mail.getReceiver() );
 		System.out.println( "title: " + mail.getTitle() );
 		System.out.println( "body: " + mail.getBody() );
+		c.sendMail(mail);
 	}	
 }
