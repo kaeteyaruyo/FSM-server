@@ -175,7 +175,7 @@ public class Client {
 				JSONObject mailHead = mails.getJSONObject( index );
 				temp.add(
 					new MailHead(
-						new Id( mailHead.getInt( "id" ) ),
+						mailHead.getString( "id" ),
 						mailHead.getString( "from" ),
 						mailHead.getString( "to" ),
 						mailHead.getString( "title" )
@@ -192,12 +192,12 @@ public class Client {
 		// Failed to get all mail.
 		return null;
 	}
-	public Mail getMail( Id id ) {
+	public Mail getMail( String id ) {
 		// Create get mail request data.
 		JSONObject request = new JSONObject()
 			.put( "event", "get mail")
 			.put( "session", this.session )
-			.put( "id", id.getId() );
+			.put( "id", id );
 		
 		// Send get mail request data.
 		this.connect().sendText( request.toString() );
@@ -212,7 +212,6 @@ public class Client {
 		if( response.getString( "auth" ).equals( "yes" ) ) {
 			JSONObject mail = response.getJSONObject( "mail" );
 			return new Mail(
-				new Id( mail.getInt( "id" ) ),
 				mail.getString( "from" ),
 				mail.getString( "to" ),
 				mail.getString( "title" ),
@@ -224,13 +223,37 @@ public class Client {
 		return null;
 	}
 	public boolean sendMail( Mail mail ) {
-		return true;
+		// Create send mail request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "send mail")
+			.put( "session", this.session )
+			.put( "from", mail.getSender() )
+			.put( "to", mail.getReceiver() )
+			.put( "title", mail.getTitle() )
+			.put( "body", mail.getBody() );
+		
+		// Send send mail request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive send mail response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully send mail response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			return true;
+		}
+				
+		// Failed to send mail.
+		return false;
 	}
 	public TaskHead[] getAllTask() {
 		return new TaskHead[1];
 	}
-	public Task getTask( Id id ) {
-		return new Task(id, "from", "to", "title", new Text[1]);
+	public Task getTask( String id ) {
+		return new Task("from", "to", "title", new Text[1]);
 	}
 	public boolean createTask( Task task ) {
 		return true;

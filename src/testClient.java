@@ -12,8 +12,7 @@ public class testClient {
 			System.out.println( "to: " + mailHeads[i].getReceiver() );
 			System.out.println( "title: " + mailHeads[i].getTitle() );
 		}
-		Mail mail = c.getMail( new Id( 0 ) );
-		System.out.println( "id: " + mail.getId() );
+		Mail mail = c.getMail( "abcdefg" );
 		System.out.println( "from: " + mail.getSender() );
 		System.out.println( "to: " + mail.getReceiver() );
 		System.out.println( "title: " + mail.getTitle() );

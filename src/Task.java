@@ -1,11 +1,11 @@
 
-public class Task extends TaskHead {
+public class Task extends Mail {
 	private Text[] text;
-	public Task(Id id, String from, String to, String title ) {
-		super( id, from, to, title );
+	public Task( String from, String to, String title ) {
+		super( from, to, title );
 	}
-	public Task(Id id, String from, String to, String title, Text[] text ) {
-		super( id, from, to, title );
+	public Task( String from, String to, String title, Text[] text ) {
+		super( from, to, title );
 		this.text = text;
 	}
 	public Text[] getTask() {
