@@ -106,7 +106,7 @@ class ClientHandler extends Thread {
 	public void run() {
 		try {
 			JSONObject request = new JSONObject( this.in.readUTF() );
-			JSONObject response;
+			JSONObject response = null;
 			switch( request.getString( "event" ) ) {
 			// Registration event
 			case "regist":
@@ -124,7 +124,6 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Authentication event
 			case "authenticate":
@@ -142,7 +141,6 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Get all mail list event
 			case "get all mail":
@@ -154,18 +152,18 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "yes" )
 						.put( "mails", new JSONArray(
-								new JSONObject[] {
-										new JSONObject()
-											.put( "id", "0" )
-											.put( "from", "kinoe@lala.mail.com" )
-											.put( "to", "kevin@lala.mail.com" )
-											.put( "title", "fuck you" ),
-										new JSONObject()
-											.put( "id", "1" )
-											.put( "from", "kevin@lala.mail.com" )
-											.put( "to", "kinoe@lala.mail.com" )
-											.put( "title", "eat shit" )
-								}
+							new JSONObject[] {
+								new JSONObject()
+									.put( "id", "0" )
+									.put( "from", "kinoe@lala.mail.com" )
+									.put( "to", "kevin@lala.mail.com" )
+									.put( "title", "fuck you" ),
+								new JSONObject()
+									.put( "id", "1" )
+									.put( "from", "kevin@lala.mail.com" )
+									.put( "to", "kinoe@lala.mail.com" )
+									.put( "title", "eat shit" )
+							}
 						) );
 				}
 				// Failed to get all mail data.
@@ -173,7 +171,6 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Get all mail list event
 			case "get mail":
@@ -197,7 +194,6 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Send mail event
 			case "send mail":
@@ -208,19 +204,45 @@ class ClientHandler extends Thread {
 				if( true ) {
 					response = new JSONObject()
 						.put( "auth", "yes" );
-					System.out.println( request.getString( "from" ) );
-					System.out.println( request.getString( "to" ) );
-					System.out.println( request.getString( "title" ) );
-					System.out.println( request.getString( "body" ) );
 				}
 				// Failed to send mail data.
 				else {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
+				break;
+			// Get all task list event
+			case "get all task":
+				//------------------------------------------------------------------------
+				// TODO: get database user all task data
+				//------------------------------------------------------------------------
+				// Successfully get all task data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" )
+						.put( "mails", new JSONArray(
+							new JSONObject[] {
+								new JSONObject()
+									.put( "id", "0" )
+									.put( "from", "kinoe@lala.mail.com" )
+									.put( "to", "kevin@lala.mail.com" )
+									.put( "title", "fuck you" ),
+								new JSONObject()
+									.put( "id", "1" )
+									.put( "from", "kevin@lala.mail.com" )
+									.put( "to", "kinoe@lala.mail.com" )
+									.put( "title", "eat shit" )
+							}
+						) );
+				}
+				// Failed to get all task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
 				break;
 			}
+			this.out.writeUTF( response.toString() );
 			this.in.close();
 			this.out.close();
 			this.clientSocket.close();

@@ -18,5 +18,12 @@ public class testClient {
 		System.out.println( "title: " + mail.getTitle() );
 		System.out.println( "body: " + mail.getBody() );
 		c.sendMail(mail);
+		TaskHead[] taskHeads = c.getAllTask();
+		for(int i=0;i<taskHeads.length;++i) {
+			System.out.println( "id: " + taskHeads[i].getId() );
+			System.out.println( "from: " + taskHeads[i].getSender() );
+			System.out.println( "to: " + taskHeads[i].getReceiver() );
+			System.out.println( "title: " + taskHeads[i].getTitle() );
+		}
 	}	
 }

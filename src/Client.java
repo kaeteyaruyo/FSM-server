@@ -186,12 +186,15 @@ public class Client {
 			if( temp.size() == 0 )
 				return null;
 			// Return all available mail.
-			return ( MailHead[] ) temp.toArray(new MailHead[ temp.size() ]);
+			return temp.toArray( new MailHead[ temp.size() ] );
 		}
 				
 		// Failed to get all mail.
 		return null;
 	}
+	/****************************************************************
+	 * Get mail by id
+	 ***************************************************************/
 	public Mail getMail( String id ) {
 		// Create get mail request data.
 		JSONObject request = new JSONObject()
@@ -222,6 +225,9 @@ public class Client {
 		// Failed to get mail.
 		return null;
 	}
+	/****************************************************************
+	 * Send mail
+	 ***************************************************************/
 	public boolean sendMail( Mail mail ) {
 		// Create send mail request data.
 		JSONObject request = new JSONObject()
@@ -249,8 +255,48 @@ public class Client {
 		// Failed to send mail.
 		return false;
 	}
+	/****************************************************************
+	 * Get all task header
+	 ***************************************************************/
 	public TaskHead[] getAllTask() {
-		return new TaskHead[1];
+		// Create get all task request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "get all task")
+			.put( "session", this.session );
+		
+		// Send get all task request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive get all task response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully get all task response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			ArrayList<TaskHead> temp = new ArrayList<TaskHead>();
+			JSONArray mails = response.getJSONArray( "mails" );
+			for( int index = 0; index < mails.length(); ++index ) {
+				JSONObject mailHead = mails.getJSONObject( index );
+				temp.add(
+					new TaskHead(
+						mailHead.getString( "id" ),
+						mailHead.getString( "from" ),
+						mailHead.getString( "to" ),
+						mailHead.getString( "title" )
+					)
+				);
+			}
+			// No mail available yet.
+			if( temp.size() == 0 )
+				return null;
+			// Return all available mail.
+			return temp.toArray( new TaskHead[ temp.size() ] );
+		}
+				
+		// Failed to get all mail.
+		return null;
 	}
 	public Task getTask( String id ) {
 		return new Task("from", "to", "title", new Text[1]);
