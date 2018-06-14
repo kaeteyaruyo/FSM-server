@@ -1,0 +1,12 @@
+import com.mongodb.MongoClientURI;
+
+public class Config {
+	public final static String username = "";
+	public final static String password = "";
+	public final static String host = "";
+	public final static String database = "";
+
+	public static MongoClientURI uri() {
+		return new MongoClientURI("mongodb://" + username + ":" + password + "@" + host + "/" + database);
+	}
+}

@@ -107,20 +107,20 @@ class ClientHandler extends Thread {
 		try {
 			JSONObject request = new JSONObject( this.in.readUTF() );
 			JSONObject response;
+			String session = "";
 			switch( request.getString( "event" ) ) {
 			// Registration event
 			case "regist":
-				//------------------------------------------------------------------------
-				// TODO: database user registration validation
-				//------------------------------------------------------------------------
-				// Successfully registed.
-				if( true ) {
+				session = Database.regist(request);
+				if( !session.equals("") ) {
+					System.out.println("Regist successed with session id = " + session);
 					response = new JSONObject()
 						.put( "auth", "yes" )
-						.put( "session", "abcdefg" );
+						.put( "session", session );
 				}
 				// Failed to regist.
 				else {
+					System.out.println("Regist fail");
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
@@ -128,17 +128,16 @@ class ClientHandler extends Thread {
 				break;
 			// Authentication event
 			case "authenticate":
-				//------------------------------------------------------------------------
-				// TODO: database user registration validation
-				//------------------------------------------------------------------------
-				// Successfully authenticated.
-				if( true ) {
+				session = Database.authenticate(request);
+				if( !session.equals("") ) {
+					System.out.println("Login successed with session id = " + session);
 					response = new JSONObject()
 						.put( "auth", "yes" )
-						.put( "session", "abcdefg" );
+						.put( "session", session );
 				}
 				// Failed to authenticate.
 				else {
+					System.out.println("Login fail");
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
