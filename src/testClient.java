@@ -40,5 +40,6 @@ public class testClient {
 		}
 		c.createTask( task );
 		c.deleteTask( "id" );
+		c.logout();
 	}	
 }

@@ -415,4 +415,31 @@ public class Client {
 		// Failed to create task.
 		return false;
 	}
+	/****************************************************************
+	 * logout
+	 ***************************************************************/
+	public boolean logout() {
+		// Create logout request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "logout")
+			.put( "session", this.session );
+		
+		// Send logout request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive logout response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully logout response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			this.session = null;
+			return true;
+		}
+		
+		// Failed to logout.
+		return false;
+	}
 }

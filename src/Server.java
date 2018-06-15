@@ -263,6 +263,22 @@ class ClientHandler extends Thread {
 						.put( "auth", "no" );
 				}
 				break;
+			// Delete task event
+			case "logout":
+				//------------------------------------------------------------------------
+				// TODO: logout database user
+				//------------------------------------------------------------------------
+				// Successfully logout data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" );
+				}
+				// Failed to logout data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;
 			}
 			this.out.writeUTF( response.toString() );
 			this.in.close();
