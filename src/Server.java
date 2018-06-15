@@ -106,17 +106,15 @@ class ClientHandler extends Thread {
 	public void run() {
 		try {
 			JSONObject request = new JSONObject( this.in.readUTF() );
-			JSONObject response;
-			String session = "";
+			JSONObject response = new JSONObject();
+			JSONArray mailList = null;
 			switch( request.getString( "event" ) ) {
 			// Registration event
 			case "regist":
-				session = Database.regist(request);
-				if( !session.equals("") ) {
-					System.out.println("Regist successed with session id = " + session);
-					response = new JSONObject()
-						.put( "auth", "yes" )
-						.put( "session", session );
+				response = Database.regist(request);
+				if( response != null ) {
+					System.out.println("Regist successed with session id = " + response.get("session").toString());
+					response.put( "auth", "yes" );
 				}
 				// Failed to regist.
 				else {
@@ -124,16 +122,13 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Authentication event
 			case "authenticate":
-				session = Database.authenticate(request);
-				if( !session.equals("") ) {
-					System.out.println("Login successed with session id = " + session);
-					response = new JSONObject()
-						.put( "auth", "yes" )
-						.put( "session", session );
+				response = Database.authenticate(request);
+				if( response != null ) {
+					System.out.println("Login successed with session id = " + response.get("session").toString());
+					response.put( "auth", "yes" );
 				}
 				// Failed to authenticate.
 				else {
@@ -141,64 +136,74 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
 			// Get all mail list event
 			case "get all mail":
-				//------------------------------------------------------------------------
-				// TODO: get database user all mail data
-				//------------------------------------------------------------------------
-				// Successfully get all mail data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" )
-						.put( "mails", new JSONArray(
-								new JSONObject[] {
-										new JSONObject()
-											.put( "id", "0" )
-											.put( "from", "kinoe@lala.mail.com" )
-											.put( "to", "kevin@lala.mail.com" )
-											.put( "title", "fuck you" ),
-										new JSONObject()
-											.put( "id", "1" )
-											.put( "from", "kevin@lala.mail.com" )
-											.put( "to", "kinoe@lala.mail.com" )
-											.put( "title", "eat shit" )
-								}
-						) );
+				mailList = Database.getAllMail(request);
+				if( mailList != null ) {
+					response.put( "auth", "yes" )
+							.put( "mails", mailList );
 				}
-				// Failed to authenticate.
+				// Failed to get all mail data.
+				else {
+					response.put( "auth", "no" );
+				}
+				break;
+			// Get all mail list event
+			case "get mail":
+				response = Database.getMail(request);
+				if( response != null ) {
+					response.put( "auth", "yes" );
+				}
+				// Failed to get mail data.
 				else {
 					response = new JSONObject()
 						.put( "auth", "no" );
 				}
-				this.out.writeUTF( response.toString() );
 				break;
-				// Get all mail list event
-				case "get mail":
-					//------------------------------------------------------------------------
-					// TODO: get database user mail data
-					//------------------------------------------------------------------------
-					// Successfully get all mail data.
-					if( true ) {
-						response = new JSONObject()
-							.put( "auth", "yes" )
-							.put( "mail", new JSONObject()
-								.put( "id", "0" )
-								.put( "from", "kinoe@lala.mail.com" )
-								.put( "to", "kevin@lala.mail.com" )
-								.put( "title", "fuck you" )
-								.put( "body", "FUCKING SHITTY MOTHERFUCKER" )
-							);
-					}
-					// Failed to authenticate.
-					else {
-						response = new JSONObject()
-							.put( "auth", "no" );
-					}
-					this.out.writeUTF( response.toString() );
-					break;
+			// Send mail event
+			case "send mail":
+				// Successfully send all mail data.
+				if( Database.sendMail(request) ) {
+					response.put( "auth", "yes" );
+				}
+				// Failed to send mail data.
+				else {
+					response.put( "auth", "no" );
+				}
+				break;
+			// Get all task list event
+			case "get all task":
+				//------------------------------------------------------------------------
+				// TODO: get database user all task data
+				//------------------------------------------------------------------------
+				// Successfully get all task data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" )
+						.put( "mails", new JSONArray(
+							new JSONObject[] {
+								new JSONObject()
+									.put( "id", "0" )
+									.put( "from", "kinoe@lala.mail.com" )
+									.put( "to", "kevin@lala.mail.com" )
+									.put( "title", "fuck you" ),
+								new JSONObject()
+									.put( "id", "1" )
+									.put( "from", "kevin@lala.mail.com" )
+									.put( "to", "kinoe@lala.mail.com" )
+									.put( "title", "eat shit" )
+							}
+						) );
+				}
+				// Failed to get all task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;
 			}
+			this.out.writeUTF( response.toString() );
 			this.in.close();
 			this.out.close();
 			this.clientSocket.close();
