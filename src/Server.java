@@ -107,13 +107,12 @@ class ClientHandler extends Thread {
 		try {
 			JSONObject request = new JSONObject( this.in.readUTF() );
 			JSONObject response = new JSONObject();
-			JSONArray mailList = null;
+			JSONArray list = null;
 			switch( request.getString( "event" ) ) {
 			// Registration event
 			case "regist":
 				response = Database.regist(request);
 				if( response != null ) {
-					System.out.println("Regist successed with session id = " + response.get("session").toString());
 					response.put( "auth", "yes" );
 				}
 				// Failed to regist.
@@ -127,7 +126,6 @@ class ClientHandler extends Thread {
 			case "authenticate":
 				response = Database.authenticate(request);
 				if( response != null ) {
-					System.out.println("Login successed with session id = " + response.get("session").toString());
 					response.put( "auth", "yes" );
 				}
 				// Failed to authenticate.
@@ -139,17 +137,17 @@ class ClientHandler extends Thread {
 				break;
 			// Get all mail list event
 			case "get all mail":
-				mailList = Database.getAllMail(request);
-				if( mailList != null ) {
+				list = Database.getAllMail(request);
+				if( list != null ) {
 					response.put( "auth", "yes" )
-							.put( "mails", mailList );
+							.put( "mails", list );
 				}
 				// Failed to get all mail data.
 				else {
 					response.put( "auth", "no" );
 				}
 				break;
-			// Get all mail list event
+			// Get mail list event
 			case "get mail":
 				response = Database.getMail(request);
 				if( response != null ) {
@@ -174,56 +172,21 @@ class ClientHandler extends Thread {
 				break;
 			// Get all task list event
 			case "get all task":
-				//------------------------------------------------------------------------
-				// TODO: get database user all task data
-				//------------------------------------------------------------------------
-				// Successfully get all task data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" )
-						.put( "tasks", new JSONArray(
-							new JSONObject[] {
-								new JSONObject()
-									.put( "id", "0" )
-									.put( "from", "kinoe@lala.mail.com" )
-									.put( "to", "kevin@lala.mail.com" )
-									.put( "title", "fuck you" ),
-								new JSONObject()
-									.put( "id", "1" )
-									.put( "from", "kevin@lala.mail.com" )
-									.put( "to", "kinoe@lala.mail.com" )
-									.put( "title", "eat shit" )
-							}
-						) );
+				list = Database.getAllTask(request);
+				if( list != null ) {
+					response.put( "auth", "yes" )
+							.put( "tasks", list );
 				}
 				// Failed to get all task data.
 				else {
-					response = new JSONObject()
-						.put( "auth", "no" );
+					response.put( "auth", "no" );
 				}
 				break;
 			// Get task list event
 			case "get task":
-				//------------------------------------------------------------------------
-				// TODO: get database user task data
-				//------------------------------------------------------------------------
-				// Successfully get task data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" )
-						.put( "task", new JSONObject()
-							.put( "from", "kevin@lala.mail.com" )
-							.put( "to", "kinoe@lala.mail.com" )
-							.put( "title", "get task and fuck you" )
-							.put( "text", new JSONArray(
-								new JSONArray[] {
-									new JSONArray( new String[] { "single-text1" } ),
-									new JSONArray( new String[] { "multi-text1-1", "multi-text1-2", "multi-text1-3", } ),
-									new JSONArray( new String[] { "multi-text2-1", "multi-text2-2", } ),
-									new JSONArray( new String[] { "single-text2" } ),
-								}
-							)
-						) );
+				response = Database.getTask(request);
+				if( response != null ) {
+					response.put( "auth", "yes" );
 				}
 				// Failed to get task data.
 				else {
@@ -233,50 +196,34 @@ class ClientHandler extends Thread {
 				break;
 			// Create task event
 			case "create task":
-				//------------------------------------------------------------------------
-				// TODO: create database user task data
-				//------------------------------------------------------------------------
 				// Successfully create task data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" );
+				if( Database.createTask(request) ) {
+					response.put( "auth", "yes" );
 				}
 				// Failed to get task data.
 				else {
-					response = new JSONObject()
-						.put( "auth", "no" );
+					response.put( "auth", "no" );
 				}
 				break;
 			// Delete task event
 			case "delete task":
-				//------------------------------------------------------------------------
-				// TODO: delete database user task data
-				//------------------------------------------------------------------------
 				// Successfully delete task data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" );
+				if( Database.deleteTask(request) ) {
+					response.put( "auth", "yes" );
 				}
 				// Failed to delete task data.
 				else {
-					response = new JSONObject()
-						.put( "auth", "no" );
+					response.put( "auth", "no" );
 				}
 				break;
 			// Delete task event
 			case "logout":
-				//------------------------------------------------------------------------
-				// TODO: logout database user
-				//------------------------------------------------------------------------
-				// Successfully logout data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" );
+				if( Database.logout(request) ) {
+					response.put( "auth", "yes" );
 				}
 				// Failed to logout data.
 				else {
-					response = new JSONObject()
-						.put( "auth", "no" );
+					response.put( "auth", "no" );
 				}
 				break;
 			}

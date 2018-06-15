@@ -260,7 +260,7 @@ public class Client {
 	public TaskHead[] getAllTask() {
 		// Create get all task request data.
 		JSONObject request = new JSONObject()
-			.put( "event", "get all task")
+			.put( "event", "get all task" )
 			.put( "session", this.session );
 		
 		// Send get all task request data.
@@ -319,8 +319,7 @@ public class Client {
 		// Successfully get task response data.
 		if( response.getString( "auth" ).equals( "yes" ) ) {
 			ArrayList<Text> tempText = new ArrayList<Text>();
-			JSONObject task = response.getJSONObject( "task" );
-			JSONArray texts = task.getJSONArray( "text" );
+			JSONArray texts = response.getJSONArray( "text" );
 			for( int index = 0; index < texts.length(); ++index ) {
 				JSONArray text = texts.getJSONArray( index );
 				// Single-text
@@ -337,9 +336,9 @@ public class Client {
 				}
 			}
 			return new Task(
-				task.getString( "from" ),
-				task.getString( "to" ),
-				task.getString( "title" ),
+				response.getString( "from" ),
+				response.getString( "to" ),
+				response.getString( "title" ),
 				tempText.toArray( new Text[ tempText.size() ] )
 			);
 		}

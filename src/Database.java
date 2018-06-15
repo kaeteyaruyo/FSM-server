@@ -9,7 +9,7 @@ public class Database{
 	private static MongoDatabase database = null;
 	
 	static {
-		try{   
+		try{
 			MongoClient connection = new MongoClient(Config.uri());
 			database = connection.getDatabase("fire_mail_server");
 			System.out.println("Connect to database successfully");
@@ -70,6 +70,7 @@ public class Database{
 	        	Document d = results.next();
 	        	if(d.get("password").equals(user.get("password"))) {
 	        		users.updateOne(eq("account", user.get("account")), new Document("$set", new Document("session", d.get("_id").toString())));
+					System.out.println("User " + user.get("account") + " login with session id = " + d.get("_id").toString());
 	        		return new JSONObject().put("session", d.get("_id").toString());
 	        	}
 	        }
@@ -85,7 +86,7 @@ public class Database{
 		try{
 			String account = checkLogin(session.get("session").toString());
 			if(!account.equals("")) {
-				MongoCollection<Document> mails = database.getCollection("mail");				
+				MongoCollection<Document> mails = database.getCollection("mail");
 		        MongoCursor<Document> results = mails.find(eq("to", account + "@bla.com")).iterator();
 		        JSONArray mailList = new JSONArray();
 		        while(results.hasNext()){
@@ -129,7 +130,7 @@ public class Database{
 	public static boolean sendMail(JSONObject session) {
 		try{
 			String account = checkLogin(session.get("session").toString());
-			if(!account.equals("")) {				
+			if(!account.equals("")) {
 				MongoCollection<Document> mails = database.getCollection("mail");
 		        Document newMail = new Document()
 		        		.append("from", session.get("from"))
@@ -145,4 +146,104 @@ public class Database{
 		}		
 		return false;
 	}
+
+	public static JSONArray getAllTask(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("task");
+		        MongoCursor<Document> results = tasks.find(eq("from", account + "@bla.com")).iterator();
+		        JSONArray taskList = new JSONArray();
+		        while(results.hasNext()){
+		        	Document d = results.next();
+		        	taskList.put(new JSONObject()
+		        					 .put("id", d.get("_id").toString())
+		        					 .put("from", d.get("from"))
+		        					 .put("to", d.get("to"))
+		        					 .put("title", d.get("title")));
+		        }
+				return taskList;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}		
+		return null;
+	}
+
+	public static JSONObject getTask(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("task");	
+		        MongoCursor<Document> results = tasks.find(eq("_id", new ObjectId(session.get("id").toString()))).iterator();
+		        JSONObject task = null;
+		        if(results.hasNext()){
+		        	Document d = results.next();
+		        	task = new JSONObject().put("from", d.get("from"))
+		        		.put("to", d.get("to"))
+		        		.put("title", d.get("title"))
+		        		.put("text", d.get("text"));
+		        }
+				return task;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}		
+		return null;
+	}
+
+	public static boolean createTask(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("task");
+		        Document newTask = new Document()
+		        		.append("from", session.get("from"))
+		        		.append("to", session.get("to"))
+		        		.append("title", session.get("title"))
+		        		.append("text", session.get("text"));
+		        tasks.insertOne(newTask);
+		        
+				return true;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}
+		return false;
+	}
+
+	public static boolean deleteTask(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("task");
+				tasks.deleteOne(eq("_id", new ObjectId(session.get("id").toString())));
+				return true;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}		
+		return false;
+	}
+	
+	public static boolean logout(JSONObject session) {
+		try{
+			MongoCollection<Document> users = database.getCollection("user");
+	        MongoCursor<Document> results = users.find(eq("session", session.get("session").toString())).iterator();
+	        
+	        if(results.hasNext()){
+	        	Document d = results.next();
+	        	if(!d.get("session").equals("")) {
+	        		users.updateOne(eq("session", d.get("_id").toString()), new Document("$set", new Document("session", "")));
+			        System.out.println("User " + d.get("account").toString() + " logout.");
+	        		return true;
+	        	}
+	        }
+			return false;
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}
+		return false;
+	}
+
 }
