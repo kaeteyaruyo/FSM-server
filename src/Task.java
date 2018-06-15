@@ -8,7 +8,7 @@ public class Task extends Mail {
 		super( from, to, title );
 		this.text = text;
 	}
-	public Text[] getTask() {
+	public Text[] getText() {
 		return this.text;
 	}
 }

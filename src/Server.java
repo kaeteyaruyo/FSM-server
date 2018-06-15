@@ -182,7 +182,6 @@ class ClientHandler extends Thread {
 					response = new JSONObject()
 						.put( "auth", "yes" )
 						.put( "mail", new JSONObject()
-							.put( "id", "0" )
 							.put( "from", "kinoe@lala.mail.com" )
 							.put( "to", "kevin@lala.mail.com" )
 							.put( "title", "fuck you" )
@@ -220,7 +219,7 @@ class ClientHandler extends Thread {
 				if( true ) {
 					response = new JSONObject()
 						.put( "auth", "yes" )
-						.put( "mails", new JSONArray(
+						.put( "tasks", new JSONArray(
 							new JSONObject[] {
 								new JSONObject()
 									.put( "id", "0" )
@@ -236,6 +235,52 @@ class ClientHandler extends Thread {
 						) );
 				}
 				// Failed to get all task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;
+			// Get task list event
+			case "get task":
+				//------------------------------------------------------------------------
+				// TODO: get database user task data
+				//------------------------------------------------------------------------
+				// Successfully get task data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" )
+						.put( "task", new JSONObject()
+							.put( "from", "kevin@lala.mail.com" )
+							.put( "to", "kinoe@lala.mail.com" )
+							.put( "title", "get task and fuck you" )
+							.put( "text", new JSONArray(
+								new JSONArray[] {
+									new JSONArray( new String[] { "single-text1" } ),
+									new JSONArray( new String[] { "multi-text1-1", "multi-text1-2", "multi-text1-3", } ),
+									new JSONArray( new String[] { "multi-text2-1", "multi-text2-2", } ),
+									new JSONArray( new String[] { "single-text2" } ),
+								}
+							)
+						) );
+				}
+				// Failed to get task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;
+			// Create task event
+			case "create task":
+				//------------------------------------------------------------------------
+				// TODO: create database user task data
+				//------------------------------------------------------------------------
+				// Successfully create task data.
+				if( true ) {
+					System.out.println( request.toString() );
+					response = new JSONObject()
+						.put( "auth", "yes" );
+				}
+				// Failed to get task data.
 				else {
 					response = new JSONObject()
 						.put( "auth", "no" );

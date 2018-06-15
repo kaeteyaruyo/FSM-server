@@ -25,5 +25,18 @@ public class testClient {
 			System.out.println( "to: " + taskHeads[i].getReceiver() );
 			System.out.println( "title: " + taskHeads[i].getTitle() );
 		}
+		Task task = c.getTask( "0" );
+		Text[] text = task.getText();
+		for(int i=0;i<text.length;++i) {
+			if( text[i] instanceof SingleText ) {
+				System.out.println( ( ( SingleText )text[i] ).getText() );
+			}
+			else {
+				for(int j=0;j<text[i].getAllText().length;++j) {
+					System.out.println( ( ( MultiText )text[i] ).getAllText()[j] );
+				}
+			}
+		}
+		c.createTask( task );
 	}	
 }
