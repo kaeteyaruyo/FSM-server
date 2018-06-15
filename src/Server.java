@@ -276,11 +276,26 @@ class ClientHandler extends Thread {
 				//------------------------------------------------------------------------
 				// Successfully create task data.
 				if( true ) {
-					System.out.println( request.toString() );
 					response = new JSONObject()
 						.put( "auth", "yes" );
 				}
 				// Failed to get task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;
+			// Delete task event
+			case "delete task":
+				//------------------------------------------------------------------------
+				// TODO: delete database user task data
+				//------------------------------------------------------------------------
+				// Successfully delete task data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" );
+				}
+				// Failed to delete task data.
 				else {
 					response = new JSONObject()
 						.put( "auth", "no" );

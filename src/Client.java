@@ -390,7 +390,30 @@ public class Client {
 	public boolean updateTask( Task task ) {
 		return true;
 	}
-	public boolean deleteTask( Task task ) {
-		return true;
+	/****************************************************************
+	 * Delete task
+	 ***************************************************************/
+	public boolean deleteTask( String id ) {
+		// Create delete task request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "delete task")
+			.put( "session", this.session )
+			.put( "id", id );
+		
+		// Send delete task request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive delete task response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully create task response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			return true;
+		}
+		// Failed to create task.
+		return false;
 	}
 }
