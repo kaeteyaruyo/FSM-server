@@ -414,7 +414,7 @@ public class Client {
 		}
 		// Failed to parse response for getting all task JSON data.
 		catch ( Exception e ) {
-			System.out.println( "Invalid JSONObject send from client." );
+			System.out.println( "Invalid JSONObject send from server." );
 			e.printStackTrace();
 			return null;
 		}
@@ -448,7 +448,7 @@ public class Client {
 		}
 		// Failed to parse response for getting all task JSON data.
 		catch ( Exception e ) {
-			System.out.println( "Invalid JSONObject send from client." );
+			System.out.println( "Invalid JSONObject send from server." );
 			e.printStackTrace();
 		}
 				
@@ -456,51 +456,76 @@ public class Client {
 		return null;
 	}
 	/****************************************************************
-	 * Get task
+	 * Get task by id
 	 ***************************************************************/
 	public Task getTask( String id ) {
-		// Create get task request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "get task")
-			.put( "session", this.session )
-			.put( "id", id );
+		// Create request for getting task JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "get task")
+				.put( "session", this.session )
+				.put( "id", id );
+		}
+		// Failed to create request for getting task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return null;
+		}
 		
-		// Send get task request data.
+		// Send request for getting task JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive get task response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for getting task JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for getting task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return null;
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully get task response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			ArrayList<Text> tempText = new ArrayList<Text>();
-			JSONArray texts = response.getJSONArray( "text" );
-			for( int index = 0; index < texts.length(); ++index ) {
-				JSONArray text = texts.getJSONArray( index );
-				// Single-text
-				if( text.length() == 1 ) {
-					tempText.add( new SingleText( text.getString( 0 ) ) );
-				}
-				// Multi-text
-				else {
-					ArrayList<String> tempString = new ArrayList<String>();
-					for( int index2 = 0; index2 < text.length(); ++index2 ) {
-						tempString.add( text.getString( index2 ) );
+		// Successfully get task.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				ArrayList<Text> tempText = new ArrayList<Text>();
+				JSONArray texts = response.getJSONArray( "text" );
+				for( int index = 0; index < texts.length(); ++index ) {
+					JSONArray text = texts.getJSONArray( index );
+					// Single-text
+					if( text.length() == 1 ) {
+						tempText.add( new SingleText( text.getString( 0 ) ) );
 					}
-					tempText.add( new MultiText( tempString.toArray( new String[ tempString.size() ] ) ) );	
+					// Multi-text
+					else {
+						ArrayList<String> tempString = new ArrayList<String>();
+						for( int index2 = 0; index2 < text.length(); ++index2 ) {
+							tempString.add( text.getString( index2 ) );
+						}
+						tempText.add( new MultiText( tempString.toArray( new String[ tempString.size() ] ) ) );	
+					}
 				}
+				return new Task(
+					response.getString( "from" ),
+					response.getString( "to" ),
+					response.getString( "title" ),
+					tempText.toArray( new Text[ tempText.size() ] ),
+					new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).parse( response.getString( "sendDate" ) ),
+					response.getInt( "interval" )
+				);
 			}
-			return new Task(
-				response.getString( "from" ),
-				response.getString( "to" ),
-				response.getString( "title" ),
-				tempText.toArray( new Text[ tempText.size() ] ),
-				new Date(),
-				new Date()
-			);
+		}
+		// Failed to parse response for getting task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 		
 		// Failed to get task.
@@ -510,64 +535,133 @@ public class Client {
 	 * Create task
 	 ***************************************************************/
 	public boolean createTask( Task task ) {
-		// Create create task request data.
+		// Create request for creating task JSON data.
 		Text[] texts = task.getText();
 		JSONArray temp = new JSONArray();
-		for( int index = 0; index < texts.length; ++index ) {
-			if( texts[ index ] instanceof SingleText ) {
-				temp.put( new JSONArray().put( ( ( SingleText ) texts[ index ] ).getText() ) );
+		JSONObject request = null;
+		try {
+			for( int index = 0; index < texts.length; ++index ) {
+				if( texts[ index ] instanceof SingleText ) {
+					temp.put( new JSONArray().put( ( ( SingleText ) texts[ index ] ).getText() ) );
+				}
+				else {
+					temp.put( new JSONArray( texts[ index ].getAllText() ) );
+				}
 			}
-			else {
-				temp.put( new JSONArray( texts[ index ].getAllText() ) );
-			}
+			request = new JSONObject()
+				.put( "event", "create task")
+				.put( "session", this.session )
+				.put( "from", task.getSender() )
+				.put( "to", task.getReceiver() )
+				.put( "title", task.getTitle() )
+				.put( "text", temp )
+				.put( "sendDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( task.getSendDate() ) )
+				.put( "interval", task.getInterval() );
 		}
-		JSONObject request = new JSONObject()
-			.put( "event", "create task")
-			.put( "session", this.session )
-			.put( "from", task.getSender() )
-			.put( "to", task.getReceiver() )
-			.put( "title", task.getTitle() )
-			.put( "text", temp );
+		// Failed to create request for creating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
+		}
 		
-		// Send create task request data.
+		// Send request for creating task JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive create task response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for creating task JSON data.
+		JSONObject response = null;
+		try { 
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for creating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully create task response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			return true;
+		// Successfully create task.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				return true;
+			}
 		}
+		// Failed to parse response for creating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+		}
+		
 		// Failed to create task.
 		return false;
 	}
 	/****************************************************************
 	 * Update task
 	 ***************************************************************/
-	public boolean updateTask( String id ) {
-		// Create update task request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "update task")
-			.put( "session", this.session )
-			.put( "id", id );
+	public boolean updateTask( String id, Task task ) {
+		// Create request for updating task JSON data.
+		Text[] texts = task.getText();
+		JSONArray temp = new JSONArray();
+		JSONObject request = null;
+		try {
+			for( int index = 0; index < texts.length; ++index ) {
+				if( texts[ index ] instanceof SingleText ) {
+					temp.put( new JSONArray().put( ( ( SingleText ) texts[ index ] ).getText() ) );
+				}
+				else {
+					temp.put( new JSONArray( texts[ index ].getAllText() ) );
+				}
+			}
+			request = new JSONObject()
+				.put( "event", "update task")
+				.put( "session", this.session )
+				.put( "id", id )
+				.put( "from", task.getSender() )
+				.put( "to", task.getReceiver() )
+				.put( "title", task.getTitle() )
+				.put( "text", temp )
+				.put( "sendDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( task.getSendDate() ) )
+				.put( "interval", task.getInterval() );
+		}
+		// Failed to create request for updating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
+		}
 		
-		// Send update task request data.
+		// Send request for updating task JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive update task response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for updating task JSON data.
+		JSONObject response = null;
+		try { 
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for updating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return false;
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully update task response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			return true;
+		// Successfully update task.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				return true;
+			}
 		}
+		// Failed to parse response for updating task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+		}
+		
 		// Failed to update task.
 		return false;
 	}
@@ -575,25 +669,50 @@ public class Client {
 	 * Delete task
 	 ***************************************************************/
 	public boolean deleteTask( String id ) {
-		// Create delete task request data.
-		JSONObject request = new JSONObject()
+		// Create request for deleting task JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
 			.put( "event", "delete task")
 			.put( "session", this.session )
 			.put( "id", id );
-		
-		// Send delete task request data.
+		}
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
+		}
+			
+		// Send request for deleting task JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive delete task response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for deleting task JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for deleting task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return false;
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully create task response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			return true;
+		// Successfully create task.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				return true;
+			}
 		}
+		// Failed to parse response for deleting task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+		}
+		
 		// Failed to create task.
 		return false;
 	}
@@ -601,24 +720,49 @@ public class Client {
 	 * logout
 	 ***************************************************************/
 	public boolean logout() {
-		// Create logout request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "logout")
-			.put( "session", this.session );
+		// Create request for logout JSON data.
+		JSONObject request = null;
+		try {
+			new JSONObject()
+				.put( "event", "logout")
+				.put( "session", this.session );
+		}
+		// Failed to create request for logout JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
+		}
 		
-		// Send logout request data.
+		// Send request for logout JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive logout response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive request for logout JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse request for logout JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return false;
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully logout response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			this.session = null;
-			return true;
+		// Successfully logout.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				this.session = null;
+				return true;
+			}
+		}
+		// Failed to parse request for logout JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 		
 		// Failed to logout.
