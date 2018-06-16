@@ -101,7 +101,7 @@ public class Client {
 	 * User registration
 	 ***************************************************************/
 	public boolean regist( String account, String password ) {
-		// Create registration request data.
+		// Create request for registration JSON data.
 		JSONObject request = null;
 		try {
 			request = new JSONObject()
@@ -109,19 +109,23 @@ public class Client {
 				.put( "account", account )
 				.put( "password", password );
 		}
+		// Failed to create request for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			return false;
 		}
-		// Send registration request data.
+		// Send request for registration JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive registration response data.
+		// Receive response for registration JSON data.
 		JSONObject response = null;
 		try {
 			response = new JSONObject( this.receiveText() );
 		}
+		// Failed to parse response for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			return false;
 		}
 		
 		// Close server connection.
@@ -134,10 +138,11 @@ public class Client {
 				return true;
 			}
 		}
+		// Failed to parse response for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
 		}
-		
+
 		// Failed to register.
 		return false;
 	}
@@ -145,7 +150,7 @@ public class Client {
 	 * User authentication
 	 ***************************************************************/
 	public boolean authenticate( String account, String password ) {
-		// Create authentication request data.
+		// Create request for authentication JSON data.
 		JSONObject request = null;
 		try {
 			request = new JSONObject()
@@ -153,25 +158,41 @@ public class Client {
 				.put( "account", account )
 				.put( "password", password );
 		}
-		catch (Exception e ) {
-			System.out.println( "Invalid JSONObject send from client." );		
+		// Failed to create request for authentication JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			return false;
 		}
 		
-		// Send authentication request data.
+		// Send request for authentication JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive authentication response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for authentication JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for authentication JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			return false;
+		}
 		
 		// Close server connection.
 		this.close();
 		
 		// Successfully authenticated.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			this.session = response.getString( "session" );
-			return true;
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				this.session = response.getString( "session" );
+				return true;
+			}
 		}
-		
+		// Failed to parse response for authentication JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+		}
+
 		// Failed to authenticate.
 		return false;
 	}
@@ -179,42 +200,64 @@ public class Client {
 	 * Get all mail header
 	 ***************************************************************/
 	public MailHead[] getAllMail() {
-		// Create get all mail request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "get all mail")
-			.put( "session", this.session );
+		// Create request for getting all mail JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "get all mail")
+				.put( "session", this.session );
+		}
+		// Failed to create request for getting all mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			return null;
+		}
 		
-		// Send get all mail request data.
+		// Send request for getting all mail JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive get all mail response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for getting all mail JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for getting all mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			return null;
+		}
 		
 		// Close server connection.
 		this.close();
 		
 		// Successfully get all mail response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			ArrayList<MailHead> temp = new ArrayList<MailHead>();
-			JSONArray mails = response.getJSONArray( "mails" );
-			for( int index = 0; index < mails.length(); ++index ) {
-				JSONObject mailHead = mails.getJSONObject( index );
-				temp.add(
-					new MailHead(
-						mailHead.getString( "id" ),
-						mailHead.getString( "from" ),
-						mailHead.getString( "to" ),
-						mailHead.getString( "title" )
-					)
-				);
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				ArrayList<MailHead> temp = new ArrayList<MailHead>();
+				JSONArray mails = response.getJSONArray( "mails" );
+				for( int index = 0; index < mails.length(); ++index ) {
+					JSONObject mailHead = mails.getJSONObject( index );
+					temp.add(
+						new MailHead(
+							mailHead.getString( "id" ),
+							mailHead.getString( "from" ),
+							mailHead.getString( "to" ),
+							mailHead.getString( "title" )
+						)
+					);
+				}
+				// No mail available yet.
+				if( temp.size() == 0 )
+					return null;
+				// Return all available mail.
+				return temp.toArray( new MailHead[ temp.size() ] );
 			}
-			// No mail available yet.
-			if( temp.size() == 0 )
-				return null;
-			// Return all available mail.
-			return temp.toArray( new MailHead[ temp.size() ] );
 		}
-				
+		// Failed to parse response for getting all mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+		}
+
 		// Failed to get all mail.
 		return null;
 	}
@@ -222,36 +265,58 @@ public class Client {
 	 * Get mail by id
 	 ***************************************************************/
 	public Mail getMail( String id ) {
-		// Create get mail request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "get mail")
-			.put( "session", this.session )
-			.put( "id", id );
+		// Create request for getting mail JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "get mail")
+				.put( "session", this.session )
+				.put( "id", id );
+		}
+		// Failed to create request for getting mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			return null;
+		}
 		
-		// Send get mail request data.
+		// Send request for getting mail JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive get mail response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for getting mail JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for get mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			return null;
+		}
 		
 		// Close server connection.
 		this.close();
 		
 		// Successfully get mail response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			try {
-				return new Mail(
-					response.getString( "from" ),
-					response.getString( "to" ),
-					response.getString( "title" ),
-					response.getString( "body" ),
-					new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( response.getString( "timeStemp" ) )
-				);
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				try {
+					return new Mail(
+						response.getString( "from" ),
+						response.getString( "to" ),
+						response.getString( "title" ),
+						response.getString( "body" ),
+						new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( response.getString( "timeStemp" ) )
+					);
+				}
+				catch ( Exception e ) {
+					System.out.println( "Wrong Date formate, should be yyyy-MM-dd hh:mm:ss" );
+					return null;
+				}
 			}
-			catch ( Exception e ) {
-				System.out.println( "Wrong Date formate, should be yyyy-MM-dd hh:mm:ss" );
-				return null;
-			}
+		}
+		// Failed to parse response for get mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
 		}
 		
 		// Failed to get mail.
@@ -261,27 +326,47 @@ public class Client {
 	 * Send mail
 	 ***************************************************************/
 	public boolean sendMail( Mail mail ) {
-		// Create send mail request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "send mail")
-			.put( "session", this.session )
-			.put( "from", mail.getSender() )
-			.put( "to", mail.getReceiver() )
-			.put( "title", mail.getTitle() )
-			.put( "body", mail.getBody() );
+		// Create request for sending mail JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "send mail")
+				.put( "session", this.session )
+				.put( "from", mail.getSender() )
+				.put( "to", mail.getReceiver() )
+				.put( "title", mail.getTitle() )
+				.put( "body", mail.getBody() );
+		}
+		// Failed to create request for sending mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+		}
 		
-		// Send send mail request data.
+		// Send request for sending mail JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive send mail response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for sending mail JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for sending mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+		}
 		
 		// Close server connection.
 		this.close();
 		
 		// Successfully send mail response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			return true;
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				return true;
+			}
+		}
+		// Failed to parse response for sending mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
 		}
 				
 		// Failed to send mail.
