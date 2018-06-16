@@ -1,20 +1,27 @@
 package FSMServer;
 import java.util.Date;
+import java.time.*;
 
 public class Mail {
 	private String from;
 	private String to;
 	private String title;
 	private String body;
-	private Date sendDate;
-	public Mail( String from, String to, String title, Date sendDate ) {	
+	private Date timeStemp;
+	public Mail( String from, String to, String title ) {	
 		this.from = from;
 		this.to = to;
 		this.title = title;
-		this.sendDate = sendDate;
+		this.timeStemp = new Date();
 	}
-	public Mail( String from, String to, String title, String body, Date sendDate ) {	
-		this( from, to, title, sendDate );
+	public Mail( String from, String to, String title, Date timeStemp ) {	
+		this.from = from;
+		this.to = to;
+		this.title = title;
+		this.timeStemp = timeStemp;
+	}
+	public Mail( String from, String to, String title, String body, Date timeStemp ) {	
+		this( from, to, title, timeStemp );
 		this.body = body;
 	}
 	public String getSender() {
@@ -29,7 +36,7 @@ public class Mail {
 	public String getBody() {
 		return this.body;
 	}
-	public Date getSendDate() {
-		return this.sendDate;
+	public Date getTimeStemp() {
+		return this.timeStemp;
 	}
 }
