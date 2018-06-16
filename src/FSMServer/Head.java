@@ -1,3 +1,4 @@
+package FSMServer;
 
 public abstract class Head {
 	private String id;

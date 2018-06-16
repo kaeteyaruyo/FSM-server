@@ -1,7 +1,11 @@
+package FSMServer;
 import java.io.*;
 import java.net.*;
 import org.json.*;
 import java.util.ArrayList;
+import java.util.Date;
+
+import java.text.SimpleDateFormat;
 
 public class Client {
 	private int port;
@@ -214,12 +218,19 @@ public class Client {
 		// Successfully get mail response data.
 		if( response.getString( "auth" ).equals( "yes" ) ) {
 			JSONObject mail = response.getJSONObject( "mail" );
-			return new Mail(
-				mail.getString( "from" ),
-				mail.getString( "to" ),
-				mail.getString( "title" ),
-				mail.getString( "body" )
-			);
+			try {
+				return new Mail(
+					mail.getString( "from" ),
+					mail.getString( "to" ),
+					mail.getString( "title" ),
+					mail.getString( "body" ),
+					new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( mail.getString( "" ) )
+				);
+			}
+			catch ( Exception e ) {
+				System.out.println( "Wrong Date formate, should be yyyy-MM-dd hh:mm:ss" );
+				return null;
+			}
 		}
 		
 		// Failed to get mail.
@@ -341,7 +352,9 @@ public class Client {
 				task.getString( "from" ),
 				task.getString( "to" ),
 				task.getString( "title" ),
-				tempText.toArray( new Text[ tempText.size() ] )
+				tempText.toArray( new Text[ tempText.size() ] ),
+				new Date(),
+				new Date()
 			);
 		}
 		
@@ -387,8 +400,31 @@ public class Client {
 		// Failed to create task.
 		return false;
 	}
-	public boolean updateTask( Task task ) {
-		return true;
+	/****************************************************************
+	 * Update task
+	 ***************************************************************/
+	public boolean updateTask( String id ) {
+		// Create update task request data.
+		JSONObject request = new JSONObject()
+			.put( "event", "update task")
+			.put( "session", this.session )
+			.put( "id", id );
+		
+		// Send update task request data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive update task response data.
+		JSONObject response = new JSONObject( this.receiveText() );
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully update task response data.
+		if( response.getString( "auth" ).equals( "yes" ) ) {
+			return true;
+		}
+		// Failed to update task.
+		return false;
 	}
 	/****************************************************************
 	 * Delete task

@@ -1,3 +1,4 @@
+package FSMServer;
 import java.util.ArrayList;
 
 public class testClient {

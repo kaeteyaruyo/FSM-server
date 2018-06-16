@@ -1,3 +1,4 @@
+package FSMServer;
 
 public class SingleText implements Text {
 	String text;

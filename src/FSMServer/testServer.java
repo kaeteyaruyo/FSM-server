@@ -1,3 +1,4 @@
+package FSMServer;
 
 public class testServer {
 	public static void main(String arg[]) {

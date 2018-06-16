@@ -1,3 +1,4 @@
+package FSMServer;
 
 public interface Text {
 	public String[] getAllText();
