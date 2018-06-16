@@ -97,7 +97,8 @@ public class Database{
 		        					 .put("id", d.get("_id").toString())
 		        					 .put("from", d.get("from"))
 		        					 .put("to", d.get("to"))
-		        					 .put("title", d.get("title")));
+		        					 .put("title", d.get("title"))
+		        					 .put("timeStemp", d.get("timeStemp")));
 		        }
 				return mailList;
 			}
@@ -116,10 +117,12 @@ public class Database{
 		        JSONObject mail = null;
 		        if(results.hasNext()){
 		        	Document d = results.next();
-		        	mail = new JSONObject().put("from", d.get("from"))
+		        	mail = new JSONObject()
+		        		.put("from", d.get("from"))
 		        		.put("to", d.get("to"))
 		        		.put("title", d.get("title"))
-		        		.put("body", d.get("body"));
+		        		.put("body", d.get("body"))
+		        		.put("timeStemp", d.get("timeStemp"));
 		        }
 				return mail;
 			}
@@ -138,7 +141,8 @@ public class Database{
 		        		.append("from", session.get("from"))
 		        		.append("to", session.get("to"))
 		        		.append("title", session.get("title"))
-		        		.append("body", session.get("body"));
+		        		.append("body", session.get("body"))
+		        		.append("timeStemp", session.get("timeStemp"));
 		        mails.insertOne(newMail);
 		        
 				return true;
@@ -181,10 +185,13 @@ public class Database{
 		        JSONObject task = null;
 		        if(results.hasNext()){
 		        	Document d = results.next();
-		        	task = new JSONObject().put("from", d.get("from"))
+		        	task = new JSONObject()
+		        		.put("from", d.get("from"))
 		        		.put("to", d.get("to"))
 		        		.put("title", d.get("title"))
-		        		.put("text", d.get("text"));
+		        		.put("text", d.get("text"))
+		        		.put("sendDate", d.get("sendDate"))
+		        		.put("interval", d.get("interval"));
 		        }
 				return task;
 			}
@@ -203,7 +210,9 @@ public class Database{
 		        		.append("from", session.get("from"))
 		        		.append("to", session.get("to"))
 		        		.append("title", session.get("title"))
-		        		.append("text", session.get("text"));
+		        		.append("text", session.get("text"))
+		        		.append("sendDate", session.get("sendDate"))
+		        		.append("interval", session.get("interval"));
 		        tasks.insertOne(newTask);
 		        
 				return true;

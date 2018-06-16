@@ -245,7 +245,7 @@ public class Client {
 					response.getString( "to" ),
 					response.getString( "title" ),
 					response.getString( "body" ),
-					new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( response.getString( "" ) )
+					new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( response.getString( "timeStemp" ) )
 				);
 			}
 			catch ( Exception e ) {
