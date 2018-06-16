@@ -43,7 +43,7 @@ public class Client {
 				this.port
 			);
 		}
-		catch ( IOException e ) {
+		catch ( Exception e ) {
 			System.out.println( "Failed to connect." );
 			e.printStackTrace();
 			this.close();
@@ -59,7 +59,7 @@ public class Client {
 			this.out.close();
 			this.clientSocket.close();
 		}
-		catch ( IOException e ) {
+		catch ( Exception e ) {
 			e.printStackTrace();
 		}
 		finally {
@@ -79,7 +79,7 @@ public class Client {
 		try {
 			this.out.writeUTF( text );
 		}
-		catch ( IOException e ) {
+		catch ( Exception e ) {
 			e.printStackTrace();
 		}
 		return this;
@@ -92,7 +92,7 @@ public class Client {
 		try {
 			text = this.in.readUTF();
 		}
-		catch ( IOException e ) {
+		catch ( Exception e ) {
 			e.printStackTrace();
 		}
 		return text;
@@ -102,24 +102,40 @@ public class Client {
 	 ***************************************************************/
 	public boolean regist( String account, String password ) {
 		// Create registration request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "regist")
-			.put( "account", account )
-			.put( "password", password );
-		
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "regist")
+				.put( "account", account )
+				.put( "password", password );
+		}
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+		}
 		// Send registration request data.
 		this.connect().sendText( request.toString() );
 		
 		// Receive registration response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+		}
 		
 		// Close server connection.
 		this.close();
 		
 		// Successfully register.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			this.session = response.getString( "session" );
-			return true;
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				this.session = response.getString( "session" );
+				return true;
+			}
+		}
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
 		}
 		
 		// Failed to register.
@@ -130,10 +146,16 @@ public class Client {
 	 ***************************************************************/
 	public boolean authenticate( String account, String password ) {
 		// Create authentication request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "authenticate")
-			.put( "account", account )
-			.put( "password", password );
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "authenticate")
+				.put( "account", account )
+				.put( "password", password );
+		}
+		catch (Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );		
+		}
 		
 		// Send authentication request data.
 		this.connect().sendText( request.toString() );
