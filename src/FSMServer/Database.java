@@ -223,6 +223,28 @@ public class Database{
 		return false;
 	}
 
+	public static boolean updateTask(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("task");				
+		        Document newTask = new Document()
+		        		.append("from", session.get("from"))
+		        		.append("to", session.get("to"))
+		        		.append("title", session.get("title"))
+		        		.append("text", session.get("text"))
+		        		.append("sendDate", session.get("sendDate"))
+		        		.append("interval", session.get("interval"));
+
+				tasks.replaceOne(eq("_id", new ObjectId(session.get("id").toString())), newTask);
+				return true;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}		
+		return false;
+	}
+	
 	public static boolean deleteTask(JSONObject session) {
 		try{
 			String account = checkLogin(session.get("session").toString());

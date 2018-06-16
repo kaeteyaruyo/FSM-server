@@ -34,8 +34,7 @@ public class testClient {
 		else
 			System.out.println("mail is null");
 
-		/*
-		c.createTask( new Task("kevin@bla.com", "kinoe@bla.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }, new Date(), new Date()) );
+		c.createTask( new Task("kinoe@bla.com", "kevin@bla.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }, new Date(), 0) );
 
 		TaskHead[] taskHeads = c.getAllTask();
 		for(int i = 0; i < taskHeads.length; ++i) {
@@ -43,9 +42,13 @@ public class testClient {
 			System.out.println( "from: " + taskHeads[i].getSender() );
 			System.out.println( "to: " + taskHeads[i].getReceiver() );
 			System.out.println( "title: " + taskHeads[i].getTitle() );
+			System.out.println( "create Date: " + taskHeads[i].getCreateDate() );
 		}
 		
 		Task task = c.getTask( taskHeads[0].getId() );
+		System.out.println( "from: " + task.getSender() );
+		System.out.println( "to: " + task.getReceiver() );
+		System.out.println( "title: " + task.getTitle() );
 		Text[] text = task.getText();
 		for(int i=0;i<text.length;++i) {
 			if( text[i] instanceof SingleText ) {
@@ -57,8 +60,10 @@ public class testClient {
 				}
 			}
 		}
+		System.out.println( "send Date: " + task.getSendDate() );
+		c.updateTast( );
 		c.deleteTask( taskHeads[0].getId() );
-*/
+
 		c.logout();
 	}	
 }
