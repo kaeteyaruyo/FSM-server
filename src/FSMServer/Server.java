@@ -1,3 +1,5 @@
+package FSMServer;
+
 import java.io.*;
 import java.net.*;
 import org.json.*;
@@ -205,6 +207,22 @@ class ClientHandler extends Thread {
 					response.put( "auth", "no" );
 				}
 				break;
+			// Update task event
+			case "update task":
+				//------------------------------------------------------------------------
+				// TODO: update database user task data
+				//------------------------------------------------------------------------
+				// Successfully update task data.
+				if( true ) {
+					response = new JSONObject()
+						.put( "auth", "yes" );
+				}
+				// Failed to update task data.
+				else {
+					response = new JSONObject()
+						.put( "auth", "no" );
+				}
+				break;			
 			// Delete task event
 			case "delete task":
 				// Successfully delete task data.
@@ -216,7 +234,7 @@ class ClientHandler extends Thread {
 					response.put( "auth", "no" );
 				}
 				break;
-			// Delete task event
+			// logout event
 			case "logout":
 				if( Database.logout(request) ) {
 					response.put( "auth", "yes" );

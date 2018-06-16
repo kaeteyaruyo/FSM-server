@@ -1,3 +1,5 @@
+package FSMServer;
+
 import com.mongodb.MongoClientURI;
 
 public class Config {

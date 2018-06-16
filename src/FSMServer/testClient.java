@@ -1,4 +1,7 @@
+package FSMServer;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 public class testClient {
 	public static void main(String arg[]) {
@@ -39,7 +42,7 @@ public class testClient {
 				}
 			}
 		}
-		c.createTask( new Task("kevin@bla.com", "kinoe@bla.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }) );
+		c.createTask( new Task("kevin@bla.com", "kinoe@bla.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }, new Date(), new Date()) );
 		c.deleteTask( taskHeads[0].getId() );
 		c.logout();
 	}	

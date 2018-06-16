@@ -1,3 +1,5 @@
+package FSMServer;
+
 import org.json.*;
 import org.bson.Document;
 import org.bson.types.ObjectId;

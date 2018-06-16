@@ -1,3 +1,4 @@
+package FSMServer;
 
 public class MultiText implements Text {
 	String text[];
