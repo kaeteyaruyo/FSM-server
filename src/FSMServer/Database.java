@@ -89,7 +89,7 @@ public class Database{
 			String account = checkLogin(session.get("session").toString());
 			if(!account.equals("")) {
 				MongoCollection<Document> mails = database.getCollection("mail");
-		        MongoCursor<Document> results = mails.find(eq("to", account + "@bla.com")).iterator();
+		        MongoCursor<Document> results = mails.find(eq("to", account + "@mail.FSM.com")).iterator();
 		        JSONArray mailList = new JSONArray();
 		        while(results.hasNext()){
 		        	Document d = results.next();
@@ -158,7 +158,7 @@ public class Database{
 			String account = checkLogin(session.get("session").toString());
 			if(!account.equals("")) {
 				MongoCollection<Document> tasks = database.getCollection("task");
-		        MongoCursor<Document> results = tasks.find(eq("from", account + "@bla.com")).iterator();
+		        MongoCursor<Document> results = tasks.find(eq("from", account + "@mail.FSM.com")).iterator();
 		        JSONArray taskList = new JSONArray();
 		        while(results.hasNext()){
 		        	Document d = results.next();
