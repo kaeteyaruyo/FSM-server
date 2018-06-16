@@ -112,6 +112,7 @@ public class Client {
 		// Failed to create request for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
 			return false;
 		}
 		// Send request for registration JSON data.
@@ -125,6 +126,7 @@ public class Client {
 		// Failed to parse response for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 			return false;
 		}
 		
@@ -141,6 +143,7 @@ public class Client {
 		// Failed to parse response for registration JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 
 		// Failed to register.
@@ -161,6 +164,7 @@ public class Client {
 		// Failed to create request for authentication JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
 			return false;
 		}
 		
@@ -175,6 +179,7 @@ public class Client {
 		// Failed to parse response for authentication JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 			return false;
 		}
 		
@@ -191,6 +196,7 @@ public class Client {
 		// Failed to parse response for authentication JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 
 		// Failed to authenticate.
@@ -210,6 +216,7 @@ public class Client {
 		// Failed to create request for getting all mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -224,6 +231,7 @@ public class Client {
 		// Failed to parse response for getting all mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -242,7 +250,8 @@ public class Client {
 							mailHead.getString( "id" ),
 							mailHead.getString( "from" ),
 							mailHead.getString( "to" ),
-							mailHead.getString( "title" )
+							mailHead.getString( "title" ),
+							new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).parse( mailHead.getString( "timeStemp" ) )
 						)
 					);
 				}
@@ -256,6 +265,7 @@ public class Client {
 		// Failed to parse response for getting all mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 
 		// Failed to get all mail.
@@ -276,6 +286,7 @@ public class Client {
 		// Failed to create request for getting mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -290,6 +301,7 @@ public class Client {
 		// Failed to parse response for get mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -299,24 +311,19 @@ public class Client {
 		// Successfully get mail response data.
 		try {
 			if( response.getString( "auth" ).equals( "yes" ) ) {
-				try {
-					return new Mail(
-						response.getString( "from" ),
-						response.getString( "to" ),
-						response.getString( "title" ),
-						response.getString( "body" ),
-						new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse( response.getString( "" ) )
-					);
-				}
-				catch ( Exception e ) {
-					System.out.println( "Wrong Date formate, should be yyyy-MM-dd hh:mm:ss" );
-					return null;
-				}
+				return new Mail(
+					response.getString( "from" ),
+					response.getString( "to" ),
+					response.getString( "title" ),
+					response.getString( "body" ),
+					new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).parse( response.getString( "timeStemp" ) )
+				);
 			}
 		}
 		// Failed to parse response for get mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 		
 		// Failed to get mail.
@@ -335,11 +342,14 @@ public class Client {
 				.put( "from", mail.getSender() )
 				.put( "to", mail.getReceiver() )
 				.put( "title", mail.getTitle() )
-				.put( "body", mail.getBody() );
+				.put( "body", mail.getBody() )
+				.put( "timeStemp", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( mail.getTimeStemp() ) );
 		}
 		// Failed to create request for sending mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
 		}
 		
 		// Send request for sending mail JSON data.
@@ -353,6 +363,8 @@ public class Client {
 		// Failed to parse response for sending mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return false;
 		}
 		
 		// Close server connection.
@@ -367,6 +379,7 @@ public class Client {
 		// Failed to parse response for sending mail JSON data.
 		catch ( Exception e ) {
 			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
 		}
 				
 		// Failed to send mail.
