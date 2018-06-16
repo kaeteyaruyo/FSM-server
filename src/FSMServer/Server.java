@@ -209,20 +209,14 @@ class ClientHandler extends Thread {
 				break;
 			// Update task event
 			case "update task":
-				//------------------------------------------------------------------------
-				// TODO: update database user task data
-				//------------------------------------------------------------------------
-				// Successfully update task data.
-				if( true ) {
-					response = new JSONObject()
-						.put( "auth", "yes" );
+				if( Database.updateTask(request) ) {
+					response.put( "auth", "yes" );
 				}
-				// Failed to update task data.
+				// Failed to delete task data.
 				else {
-					response = new JSONObject()
-						.put( "auth", "no" );
+					response.put( "auth", "no" );
 				}
-				break;			
+				break;
 			// Delete task event
 			case "delete task":
 				// Successfully delete task data.

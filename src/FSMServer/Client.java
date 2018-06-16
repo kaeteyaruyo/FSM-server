@@ -555,6 +555,7 @@ public class Client {
 				.put( "to", task.getReceiver() )
 				.put( "title", task.getTitle() )
 				.put( "text", temp )
+				.put( "createDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( new Date() ) )
 				.put( "sendDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( task.getSendDate() ) )
 				.put( "interval", task.getInterval() );
 		}
@@ -622,6 +623,7 @@ public class Client {
 				.put( "to", task.getReceiver() )
 				.put( "title", task.getTitle() )
 				.put( "text", temp )
+				.put( "createDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( new Date() ) )
 				.put( "sendDate", new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).format( task.getSendDate() ) )
 				.put( "interval", task.getInterval() );
 		}
@@ -723,7 +725,7 @@ public class Client {
 		// Create request for logout JSON data.
 		JSONObject request = null;
 		try {
-			new JSONObject()
+			request = new JSONObject()
 				.put( "event", "logout")
 				.put( "session", this.session );
 		}

@@ -1,6 +1,5 @@
 package FSMServer;
 import java.util.Date;
-import java.time.*;
 
 public class Mail {
 	private String from;

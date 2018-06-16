@@ -166,7 +166,8 @@ public class Database{
 		        					 .put("id", d.get("_id").toString())
 		        					 .put("from", d.get("from"))
 		        					 .put("to", d.get("to"))
-		        					 .put("title", d.get("title")));
+		        					 .put("title", d.get("title"))
+		        					 .put("createDate", d.get("createDate")));
 		        }
 				return taskList;
 			}
@@ -190,6 +191,7 @@ public class Database{
 		        		.put("to", d.get("to"))
 		        		.put("title", d.get("title"))
 		        		.put("text", d.get("text"))
+		        		.put("createDate", d.get("createDate"))
 		        		.put("sendDate", d.get("sendDate"))
 		        		.put("interval", d.get("interval"));
 		        }
@@ -211,6 +213,7 @@ public class Database{
 		        		.append("to", session.get("to"))
 		        		.append("title", session.get("title"))
 		        		.append("text", session.get("text"))
+		        		.append("createDate", session.get("createDate"))
 		        		.append("sendDate", session.get("sendDate"))
 		        		.append("interval", session.get("interval"));
 		        tasks.insertOne(newTask);
@@ -233,6 +236,7 @@ public class Database{
 		        		.append("to", session.get("to"))
 		        		.append("title", session.get("title"))
 		        		.append("text", session.get("text"))
+		        		.append("createDate", session.get("createDate"))
 		        		.append("sendDate", session.get("sendDate"))
 		        		.append("interval", session.get("interval"));
 
