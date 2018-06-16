@@ -238,7 +238,7 @@ public class Client {
 		// Close server connection.
 		this.close();
 		
-		// Successfully get all mail response data.
+		// Successfully get all mail.
 		try {
 			if( response.getString( "auth" ).equals( "yes" ) ) {
 				ArrayList<MailHead> temp = new ArrayList<MailHead>();
@@ -308,7 +308,7 @@ public class Client {
 		// Close server connection.
 		this.close();
 		
-		// Successfully get mail response data.
+		// Successfully get mail.
 		try {
 			if( response.getString( "auth" ).equals( "yes" ) ) {
 
@@ -371,7 +371,7 @@ public class Client {
 		// Close server connection.
 		this.close();
 		
-		// Successfully send mail response data.
+		// Successfully send mail.
 		try {
 			if( response.getString( "auth" ).equals( "yes" ) ) {
 				return true;
@@ -390,40 +390,66 @@ public class Client {
 	 * Get all task header
 	 ***************************************************************/
 	public TaskHead[] getAllTask() {
-		// Create get all task request data.
-		JSONObject request = new JSONObject()
-			.put( "event", "get all task" )
-			.put( "session", this.session );
+		// Create request for getting all task JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "get all task" )
+				.put( "session", this.session );
+		}
+		// Failed to create request for getting all task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return null;
+		}
 		
-		// Send get all task request data.
+		// Send request for getting all task JSON data.
 		this.connect().sendText( request.toString() );
 		
-		// Receive get all task response data.
-		JSONObject response = new JSONObject( this.receiveText() );
+		// Receive response for getting all task JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for getting all task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return null;
+		}
 		
 		// Close server connection.
 		this.close();
 		
-		// Successfully get all task response data.
-		if( response.getString( "auth" ).equals( "yes" ) ) {
-			ArrayList<TaskHead> temp = new ArrayList<TaskHead>();
-			JSONArray tasks = response.getJSONArray( "tasks" );
-			for( int index = 0; index < tasks.length(); ++index ) {
-				JSONObject taskHead = tasks.getJSONObject( index );
-				temp.add(
-					new TaskHead(
-						taskHead.getString( "id" ),
-						taskHead.getString( "from" ),
-						taskHead.getString( "to" ),
-						taskHead.getString( "title" )
-					)
-				);
+		// Successfully get all task.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				ArrayList<TaskHead> temp = new ArrayList<TaskHead>();
+				JSONArray tasks = response.getJSONArray( "tasks" );
+				for( int index = 0; index < tasks.length(); ++index ) {
+					JSONObject taskHead = tasks.getJSONObject( index );
+					temp.add(
+						new TaskHead(
+							taskHead.getString( "id" ),
+							taskHead.getString( "from" ),
+							taskHead.getString( "to" ),
+							taskHead.getString( "title" ),
+							new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" ).parse( taskHead.getString( "createDate" ) )
+						)
+					);
+				}
+				// No task available yet.
+				if( temp.size() == 0 )
+					return null;
+				// Return all available task.
+				return temp.toArray( new TaskHead[ temp.size() ] );
 			}
-			// No task available yet.
-			if( temp.size() == 0 )
-				return null;
-			// Return all available task.
-			return temp.toArray( new TaskHead[ temp.size() ] );
+		}
+		// Failed to parse response for getting all task JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
 		}
 				
 		// Failed to get all task.
