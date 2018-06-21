@@ -172,6 +172,17 @@ class ClientHandler extends Thread {
 					response.put( "auth", "no" );
 				}
 				break;
+			// Send mail event
+			case "delete mail":
+				// Successfully send all mail data.
+				if( Database.deleteMail(request) ) {
+					response.put( "auth", "yes" );
+				}
+				// Failed to send mail data.
+				else {
+					response.put( "auth", "no" );
+				}
+				break;
 			// Get all task list event
 			case "get all task":
 				list = Database.getAllTask(request);

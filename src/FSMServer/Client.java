@@ -387,6 +387,58 @@ public class Client {
 		return false;
 	}
 	/****************************************************************
+	 * Delete mail
+	 ***************************************************************/
+	public boolean deleteMail( String id ) {
+		// Create request for deleting mail JSON data.
+		JSONObject request = null;
+		try {
+			request = new JSONObject()
+				.put( "event", "delete mail")
+				.put( "session", this.session )
+				.put( "id", id );
+		}
+		// Failed to create request for deleting mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from client." );
+			e.printStackTrace();
+			return false;
+		}
+		
+		// Send request for deleting mail JSON data.
+		this.connect().sendText( request.toString() );
+		
+		// Receive response for deleting mail JSON data.
+		JSONObject response = null;
+		try {
+			response = new JSONObject( this.receiveText() );
+		}
+		// Failed to parse response for deleting mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+			return false;
+		}
+		
+		// Close server connection.
+		this.close();
+		
+		// Successfully delete mail.
+		try {
+			if( response.getString( "auth" ).equals( "yes" ) ) {
+				return true;
+			}
+		}
+		// Failed to parse response for deleting mail JSON data.
+		catch ( Exception e ) {
+			System.out.println( "Invalid JSONObject send from server." );
+			e.printStackTrace();
+		}
+		
+		// Failed to delete mail.
+		return false;
+	}
+	/****************************************************************
 	 * Get all task header
 	 ***************************************************************/
 	public TaskHead[] getAllTask() {
