@@ -6,9 +6,7 @@ import java.util.Date;
 public class testClient {
 	public static void main(String arg[]) {
 		Client c = new Client( "localhost", 3000 );
-		//c.regist("kevin","lala");
 		c.authenticate("kinoe","0930");
-		/*c.sendMail(new Mail("kinoe@mail.FSM.com", "kevin@mail.FSM.com", "=3=", ":D", new Date()));
 
 		MailHead[] mailHeads = c.getAllMail();
 		if(mailHeads != null) {
@@ -33,8 +31,9 @@ public class testClient {
 		}
 		else
 			System.out.println("mail is null");
-*/
-		c.createTask( new Task("kinoe@mail.FSM.com", "kevin@mail.FSM.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }, new Date(), 0) );
+		c.deleteTask( mailHeads[0].getId() );
+		
+/*		c.createTask( new Task("kinoe@mail.FSM.com", "kevin@mail.FSM.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "ZZZzzzz."}) }, new Date(), 0) );
 
 		TaskHead[] taskHeads = c.getAllTask();
 		for(int i = 0; i < taskHeads.length; ++i) {
@@ -65,6 +64,6 @@ public class testClient {
 		c.updateTask( taskHeads[0].getId(),  new Task("kinoe@bla.com", "kevin@bla.com", "Late at work", new Text[] { new SingleText("Sorry, "), new MultiText(new String[] {"Someone fuck up the server.", "working on routing.", "dont wanna go home."}) }, new Date(), 0));
 		//c.deleteTask( taskHeads[0].getId() );
 
-		c.logout();
-	}	
+*/		c.logout();
+	}
 }

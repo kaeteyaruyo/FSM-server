@@ -153,6 +153,20 @@ public class Database{
 		return false;
 	}
 
+	public static boolean deleteMail(JSONObject session) {
+		try{
+			String account = checkLogin(session.get("session").toString());
+			if(!account.equals("")) {
+				MongoCollection<Document> tasks = database.getCollection("mail");
+				tasks.deleteOne(eq("_id", new ObjectId(session.get("id").toString())));
+				return true;
+			}
+		} catch(Exception e){
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		}		
+		return false;
+	}
+	
 	public static JSONArray getAllTask(JSONObject session) {
 		try{
 			String account = checkLogin(session.get("session").toString());
